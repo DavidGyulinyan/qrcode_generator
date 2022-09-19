@@ -1,23 +1,49 @@
-import logo from './logo.svg';
+import { useEffect, useState } from 'react';
+import {useRef} from 'react';
 import './App.css';
 
 function App() {
+
+  const inputRef = useRef(null);
+  const [qrUrl, setWord] = useState("");
+  const [qrImg, setQrCode] = useState("");
+  const [active, setQrCodeStatus] = useState("");
+
+  useEffect(() => {
+    setQrCode
+  (`http://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${qrUrl}`);
+  },);
+
+  function generateQR() {
+    let qrValue = inputRef.current.value.trim();
+    if(!qrValue) return;
+    setWord(qrValue);
+    setQrCodeStatus("active");
+  }
+
+  const inputChange = event => {
+    if(event.target.value === '') setQrCodeStatus('inActive');
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+    <div className={ `wrapper ${active} === 'active' ? "wrapper active" : "wrapper"` }>
+      <header>
+        <h1>QR Code Generator</h1>
+        <p>Paste a url or enter text to create QR code</p>
       </header>
+      <div class="form">
+        <input ref={inputRef} onChange={inputChange} type="text" id="qr_code" name="qr_code" spellcheck="false" placeholder="Enter text or url" />
+        <button onClick={generateQR}>Generate QR Code</button>
+      </div>
+      <div class="qr-code">
+        <img src={qrImg} alt="qr-code" />
+      </div>
+
+      <div className="output-box">
+                <a href={qrImg} download="QRCode">
+                    <button type="button">Download</button>
+                </a>
+            </div>
     </div>
   );
 }
